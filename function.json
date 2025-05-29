@@ -1,0 +1,7 @@
+{
+  "name": "outputQueueItem",
+  "type": "queue",
+  "direction": "out",
+  "queueName": "myqueue-items",
+  "connection": "AzureWebJobsStorage"
+}
