@@ -6,8 +6,8 @@
 
 ## Video Demonstrations
 
-- [Part 1 - Queue Binding Demo]()  
-- [Part 2 - SQL Binding Demo]()
+- Part 1 - https://youtu.be/jXypYmZlbmU
+- Part 2 - 
 
 ---
 
