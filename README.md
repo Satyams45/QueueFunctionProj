@@ -7,7 +7,7 @@
 ## Video Demonstrations
 
 - Part 1 - https://youtu.be/jXypYmZlbmU
-- Part 2 - 
+- Part 2 - https://youtu.be/4T67RYSsY9k
 
 ---
 
@@ -118,7 +118,7 @@ For Azure SQL binding support, use the following host.json configuration:
   }
 }
 ```
-# Azure Function App – Run, Test, and Deploy Guide
+## Azure Function App – Run, Test, and Deploy Guide
 
 ## Run & Test
 
