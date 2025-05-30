@@ -1,6 +1,7 @@
 # Azure Function: Storage Queue & SQL Output Binding (Python)
 
 **Name:** Satyam Panseriya 
+
 **Student ID:** 041128392  
 **Email:** pans0012@algonquinlive.com  
 
@@ -35,7 +36,7 @@ In this lab, we develop two serverless Azure Function apps using Python and Visu
 ---
 
 
-### 💻 Local Environment Requirements
+### Local Environment Requirements
 
 - Python 3.8 or 3.9
 - Azure Functions Core Tools
@@ -141,3 +142,104 @@ For Azure SQL binding support, use the following host.json configuration:
 ------
 
 #  SQL Output Binding
+
+## Prerequisites
+
+- Azure Subscription
+- Azure SQL Database
+- Azure Functions Core Tools
+- Visual Studio Code with Azure Functions and Azure Tools extensions
+- Python (recommended: 3.10+)
+
+---
+
+## Step 1: Create SQL Database
+
+1. Create an Azure SQL Database with the following settings:
+   - **Name:** `mySampleDatabase`
+   - **Server:** Must be globally unique
+   - **Authentication:** SQL Server Authentication
+      **Allow Azure services to access the server**
+
+2. Run the following query in **Query Editor** in the Azure Portal or any SQL client:
+
+   ```sql
+   CREATE TABLE dbo.ToDo (
+       [Id] UNIQUEIDENTIFIER PRIMARY KEY,
+       [order] INT NULL,
+       [title] NVARCHAR(200) NOT NULL,
+       [url] NVARCHAR(200) NOT NULL,
+       [completed] BIT NOT NULL
+   );
+
+## Step 2: Add App Setting in Azure Functions
+
+   1. Press F1 in VS Code → Select Azure Functions: Add New Setting...
+
+   2. Create a new setting:
+      - Name: SqlConnectionString
+      - Value: Your ADO.NET connection string (edit with your SQL server name, DB name, username, and password)
+     
+## Step 3: Function Code (function_app.py)
+
+  ```python
+import azure.functions as func
+import logging
+from azure.functions.decorators.core import DataType
+import uuid
+
+app = func.FunctionApp()
+
+@app.function_name(name="HttpTrigger1")
+@app.route(route="hello", auth_level=func.AuthLevel.ANONYMOUS)
+@app.generic_output_binding(
+    arg_name="toDoItems",
+    type="sql",
+    CommandText="dbo.ToDo",
+    ConnectionStringSetting="SqlConnectionString",
+    data_type=DataType.STRING
+)
+def test_function(req: func.HttpRequest, toDoItems: func.Out[func.SqlRow]) -> func.HttpResponse:
+    logging.info('Processing HTTP request.')
+
+    name = req.get_json().get('name')
+    if name:
+        toDoItems.set(func.SqlRow({
+            "Id": str(uuid.uuid4()),
+            "title": name,
+            "completed": False,
+            "url": ""
+        }))
+        return func.HttpResponse(f"Hello {name}!")
+    else:
+        return func.HttpResponse(
+            "Please pass a name in the request body",
+            status_code=400
+        )
+
+```
+
+## Step 4: Run & Test Locally
+   1. Press F5 to run the function locally.
+   2. Right-click HttpTrigger1 → Select Execute Function.
+   3. Use the following test input in the body:
+
+```json
+{
+  "name": "Azure"
+}
+```
+   4. Check SQL Database using the query below:
+
+```sql
+SELECT TOP 1000 * FROM dbo.ToDo;
+```
+
+## Step 5: Deploy to Azure
+  1. Press F1 → Select Azure Functions: Deploy to Function App
+  2. Follow the prompts to deploy your function.
+
+## Video Demonstrations
+
+- Part 1 - https://youtu.be/jXypYmZlbmU
+- Part 2 - https://youtu.be/4T67RYSsY9k
